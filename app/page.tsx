@@ -17,33 +17,7 @@ export default async function Home() {
     <main className="min-h-screen bg-gray-50">
       <section className="bg-[#1A9E6E] text-white py-20 px-4 text-center">
         <h1 className="text-4xl font-bold mb-4">Negoshi</h1>
-        <p className="text-xl mb-2">Australia's best mobile & internet deals</p>
-        <p className="text-white/70">Curated. Honest. No paid placements.</p>
-      </section>
-
-      <section className="max-w-4xl mx-auto py-12 px-4">
-        <h2 className="text-2xl font-bold mb-6
-cat > app/page.tsx << 'EOF'
-import { supabase } from './lib/supabase'
-
-export default async function Home() {
-  const { data: deals } = await supabase
-    .from('deals')
-    .select(`
-      *,
-      providers ( name ),
-      categories ( name ),
-      deal_tags ( tag )
-    `)
-    .eq('is_active', true)
-    .order('is_featured', { ascending: false })
-    .order('created_at', { ascending: false })
-
-  return (
-    <main className="min-h-screen bg-gray-50">
-      <section className="bg-[#1A9E6E] text-white py-20 px-4 text-center">
-        <h1 className="text-4xl font-bold mb-4">Negoshi</h1>
-        <p className="text-xl mb-2">Australia's best mobile & internet deals</p>
+        <p className="text-xl mb-2">Australia&apos;s best mobile &amp; internet deals</p>
         <p className="text-white/70">Curated. Honest. No paid placements.</p>
       </section>
 
@@ -51,10 +25,10 @@ export default async function Home() {
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Latest Deals</h2>
         <div className="grid gap-4">
           {deals?.map((deal) => (
-            <div key={deal.id} className="bg-white rounded-xl shadow-p-6 flex justify-between items-center">
+            <div key={deal.id} className="bg-white rounded-xl shadow p-6 flex justify-between items-center">
               <div>
                 <h3 className="text-lg font-bold text-gray-900">{deal.title}</h3>
-                <p className="text-gray-500">{deal.providers?.name} · {deal.categories?.name}</p>
+                <p className="text-gray-500">{deal.providers?.name} &middot; {deal.categories?.name}</p>
                 <p className="text-gray-600 mt-1">{deal.description}</p>
                 {deal.deal_tags?.length > 0 && (
                   <div className="flex gap-2 mt-2 flex-wrap">
