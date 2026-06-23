@@ -5,8 +5,6 @@ const fraunces = Fraunces({
   subsets: ['latin'],
   variable: '--font-display',
   display: 'swap',
-  axes: ['opsz'],
-  weight: ['300', '500', '700'],
 })
 
 const jakarta = Plus_Jakarta_Sans({
@@ -18,16 +16,7 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: 'Negoshi — Better deals together',
-  description:
-    'Negoshi pools Australians together to unlock exclusive mobile and internet rates. Free to join. Save every month.',
-  openGraph: {
-    title: 'Negoshi — Better deals together',
-    description: 'Free to join. Save on mobile and internet every month.',
-    url: 'https://negoshi.com.au',
-    siteName: 'Negoshi',
-    locale: 'en_AU',
-    type: 'website',
-  },
+  description: 'Negoshi pools Australians together to unlock exclusive mobile and internet rates. Free to join. Save every month.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
