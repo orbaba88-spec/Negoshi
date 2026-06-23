@@ -17,6 +17,9 @@ const jakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: 'Negoshi — Better deals together',
   description: 'Negoshi pools Australians together to unlock exclusive mobile and internet rates. Free to join. Save every month.',
+  other: {
+    'commission-factory-verification': 'b94cee8387bf40eb9f2384e441994838',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
