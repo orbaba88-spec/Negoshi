@@ -6,6 +6,8 @@ import DealsSection from './components/DealsSection'
 import { CollectivePower, CTASection } from './components/ClientSections'
 import './negoshi.css'
 
+export const revalidate = 0
+
 async function getDeals() {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
