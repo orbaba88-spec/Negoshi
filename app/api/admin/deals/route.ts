@@ -7,17 +7,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-function isAuthorised(request: Request): boolean {
-  const auth = request.headers.get('x-admin-password')
-  const expected = process.env.ADMIN_PASSWORD
-  if (!expected) return false
-  return auth === expected
-}
-
-export async function GET(request: Request) {
-  if (!isAuthorised(request)) {
-    return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
-  }
+export async function GET() {
   const { data, error } = await supabase
     .from('deals')
     .select(`id, plan_name, price, retail_price, is_active, is_featured, is_member_exclusive, affiliate_url, description, expires_at, cf_product_id, providers ( name, logo_color, logo_text ), categories ( name, slug )`)
@@ -27,9 +17,6 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  if (!isAuthorised(request)) {
-    return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
-  }
   const body = await request.json()
   const { error, data } = await supabase
     .from('deals')
@@ -55,9 +42,6 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  if (!isAuthorised(request)) {
-    return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
-  }
   const body = await request.json()
   const { id, ...fields } = body
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
@@ -73,9 +57,6 @@ export async function PATCH(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  if (!isAuthorised(request)) {
-    return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
-  }
   const { searchParams } = new URL(request.url)
   const id = searchParams.get('id')
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
