@@ -7,7 +7,6 @@ const MEMBER_COUNT = 2413
 function useCountUp(target: number, duration = 1400) {
   const [count, setCount] = useState(0)
   const started = useRef(false)
-
   useEffect(() => {
     if (started.current) return
     started.current = true
@@ -20,29 +19,15 @@ function useCountUp(target: number, duration = 1400) {
     }
     requestAnimationFrame(step)
   }, [target, duration])
-
   return count
 }
 
 export default function Hero() {
   const count = useCountUp(MEMBER_COUNT)
-  const [visible, setVisible] = useState(false)
-
-  useEffect(() => {
-    const t = setTimeout(() => setVisible(true), 100)
-    return () => clearTimeout(t)
-  }, [])
-
-  const previewDeals = [
-    { logo: 'TEL', color: '#0057B8', name: 'Telstra 30GB Mobile', detail: '30-day · Unlimited calls & SMS', price: '$22', was: '$45', save: 'Save $23/mo' },
-    { logo: 'OPT', color: '#FF6B00', name: 'Optus Unlimited',     detail: 'No contract · All calls & SMS',  price: '$35', was: '$55', save: 'Save $20/mo' },
-    { logo: 'ABB', color: '#1B4332', name: 'NBN 100/20 Home Fast', detail: 'Internet · Unlimited · No lock-in', price: '$65', was: '$89', save: 'Save $24/mo' },
-  ]
 
   return (
     <div className="n-hero-wrap">
       <div className="n-hero">
-        {/* Left — copy */}
         <div>
           <div className="n-eyebrow">
             <div className="n-pulse" />
@@ -72,28 +57,11 @@ export default function Hero() {
             </span>
           </div>
         </div>
-
-        {/* Right — deal card previews */}
         <div className="n-hero-visual">
           <div className="n-member-badge">🔑 Negoshi member rate</div>
-          {previewDeals.map((deal, i) => (
-            <div
-              key={i}
-              className={`n-deal-preview${visible ? ' visible' : ''}`}
-              style={{ animationDelay: `${i * 120}ms` }}
-            >
-              <div className="n-dp-logo" style={{ background: deal.color }}>{deal.logo}</div>
-              <div className="n-dp-info">
-                <div className="n-dp-name">{deal.name}</div>
-                <div className="n-dp-detail">{deal.detail}</div>
-              </div>
-              <div className="n-dp-pricing">
-                <div className="n-dp-price">{deal.price}<span style={{ fontSize: '0.85rem' }}>/mo</span></div>
-                <div className="n-dp-was">was {deal.was}</div>
-                <div className="n-save-badge">{deal.save}</div>
-              </div>
-            </div>
-          ))}
+          <div style={{ background: '#fff', borderRadius: 14, padding: '2rem', border: '1px solid rgba(26,23,20,.07)', textAlign: 'center', color: '#7A736C', fontSize: '0.9rem' }}>
+            Live deals loading below ↓
+          </div>
         </div>
       </div>
     </div>

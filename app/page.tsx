@@ -6,45 +6,24 @@ import DealsSection from './components/DealsSection'
 import { CollectivePower, CTASection } from './components/ClientSections'
 import './negoshi.css'
 
-// ─── Supabase (server-side) ────────────────────────────────────────────────
 async function getDeals() {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
-
   const { data, error } = await supabase
     .from('deals')
-    .select(`
-      id,
-      plan_name,
-      data_gb,
-      price,
-      retail_price,
-      is_featured,
-      is_member_exclusive,
-      affiliate_url,
-      description,
-      providers ( name, logo_color, logo_text ),
-      categories ( name, slug )
-    `)
+    .select(`id, plan_name, description, price, retail_price, is_featured, is_member_exclusive, affiliate_url, providers ( name, logo_color, logo_text ), categories ( name, slug )`)
     .eq('is_active', true)
     .order('is_featured', { ascending: false })
     .order('price', { ascending: true })
     .limit(6)
-
-  if (error) {
-    console.error('Deals fetch error:', error)
-    return []
-  }
-
+  if (error) { console.error(error); return [] }
   return data ?? []
 }
 
-// ─── Page ──────────────────────────────────────────────────────────────────
 export default async function HomePage() {
   const deals = await getDeals()
-
   return (
     <>
       <Navbar />
