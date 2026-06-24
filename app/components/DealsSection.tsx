@@ -117,7 +117,7 @@ export default function DealsSection({ deals }: Props) {
                   rel="noopener noreferrer"
                   className="n-deal-btn"
                 >
-                  Get this deal →
+                  Get this deal
                 </a>
               </div>
             ))}
