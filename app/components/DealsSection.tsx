@@ -22,7 +22,7 @@ export default function DealsSection({ deals }: Props) {
   const [activeTab, setActiveTab] = useState<'picks' | 'cheapest' | 'value'>('picks')
 
   const sorted = {
-    picks:    [...deals].filter(d => d.is_negoshi_pick),
+    picks:    deals.filter(d => d.is_negoshi_pick),
     cheapest: [...deals].sort((a, b) => a.price - b.price),
     value:    [...deals].sort((a, b) => (a.price / (a.retail_price || 1)) - (b.price / (b.retail_price || 1))),
   }
@@ -31,10 +31,10 @@ export default function DealsSection({ deals }: Props) {
   const saving = (d: Deal) => Math.round(d.retail_price - d.price)
 
   const tabs = [
-    { key: 'picks',    label: '⭐ Negoshi best picks' },
-    { key: 'cheapest', label: '💰 Lowest price'       },
-    { key: 'value',    label: '📊 Most data per $'    },
-  ] as const
+    { key: 'picks' as const,    label: 'Negoshi best picks' },
+    { key: 'cheapest' as const, label: 'Lowest price' },
+    { key: 'value' as const,    label: 'Most data per $' },
+  ]
 
   return (
     <section className="n-deals-bg">
@@ -42,13 +42,13 @@ export default function DealsSection({ deals }: Props) {
         <div className="n-deals-header">
           <div>
             <div className="n-sect-eyebrow">Hot deals</div>
-            <h2 className="n-sect-title" style={{ marginBottom: 0 }}>What's live right now</h2>
+            <h2 className="n-sect-title" style={{ marginBottom: 0 }}>What is live right now</h2>
           </div>
           <div className="n-tab-bar">
             {tabs.map(t => (
               <button
                 key={t.key}
-                className={`n-tab${activeTab === t.key ? ' active' : ''}`}
+                className={'n-tab' + (activeTab === t.key ? ' active' : '')}
                 onClick={() => setActiveTab(t.key)}
               >
                 {t.label}
@@ -59,23 +59,19 @@ export default function DealsSection({ deals }: Props) {
 
         {filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '3rem', color: '#7A736C', fontSize: '0.95rem' }}>
-            No deals in this category yet — check back soon.
+            No deals in this category yet.
           </div>
         ) : (
           <div className="n-deals-grid">
             {filtered.map((deal) => (
               <div
                 key={deal.id}
-                className={`n-deal-card${deal.is_featured ? ' featured' : ''}`}
+                className={'n-deal-card' + (deal.is_featured ? ' featured' : '')}
                 style={{ position: 'relative' }}
               >
                 {deal.is_negoshi_pick && (
-                  <div className="n-featured-label">⭐ Negoshi pick</div>
+                  <div className="n-featured-label">Negoshi pick</div>
                 )}
-                {!deal.is_negoshi_pick && deal.is_featured && (
-                  <div className="n-featured-label">Best value</div>
-                )}
-
                 <div className="n-card-top">
                   <div className="n-card-prov">
                     <div className="n-card-logo" style={{ background: deal.providers?.logo_color }}>
@@ -83,18 +79,16 @@ export default function DealsSection({ deals }: Props) {
                     </div>
                     <div>
                       <div className="n-card-prov-name">{deal.providers?.name}</div>
-                      <div className={`n-cat-pill${deal.categories?.slug === 'internet' ? ' inet' : ''}`}>
+                      <div className={'n-cat-pill' + (deal.categories?.slug === 'internet' ? ' inet' : '')}>
                         {deal.categories?.name}
                       </div>
                     </div>
                   </div>
                 </div>
-
                 <div>
                   <div className="n-card-plan">{deal.plan_name}</div>
                   <div className="n-card-spec">{deal.description}</div>
                 </div>
-
                 <div className="n-card-pricing">
                   <div>
                     <div className="n-card-price">${deal.price}</div>
@@ -102,15 +96,12 @@ export default function DealsSection({ deals }: Props) {
                   </div>
                   <div className="n-card-retail">${deal.retail_price}/mo retail</div>
                 </div>
-
                 <div className="n-card-saving">
-                  ✓ Save ${saving(deal)}/month
+                  Save ${saving(deal)}/month
                 </div>
-
                 {deal.is_member_exclusive && (
-                  <div className="n-member-only">🔑 Negoshi member exclusive</div>
+                  <div className="n-member-only">Negoshi member exclusive</div>
                 )}
-
                 
                   href={deal.affiliate_url}
                   target="_blank"
@@ -125,7 +116,7 @@ export default function DealsSection({ deals }: Props) {
         )}
 
         <div className="n-see-all">
-          <a href="/deals">See all deals →</a>
+          <a href="/deals">See all deals</a>
         </div>
       </div>
     </section>
