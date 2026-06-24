@@ -19,22 +19,19 @@ export type Deal = {
 type Props = { deals: Deal[] }
 
 export default function DealsSection({ deals }: Props) {
-  const [activeTab, setActiveTab] = useState<'picks' | 'cheapest' | 'value'>('picks')
+  const [category, setCategory] = useState<'mobile' | 'internet'>('mobile')
+  const [sub, setSub] = useState<'picks' | 'value' | 'cheapest'>('picks')
+
+  const byCategory = deals.filter(d => d.categories?.slug === category)
 
   const sorted = {
-    picks:    deals.filter(d => d.is_negoshi_pick),
-    cheapest: [...deals].sort((a, b) => a.price - b.price),
-    value:    [...deals].sort((a, b) => (a.price / (a.retail_price || 1)) - (b.price / (b.retail_price || 1))),
+    picks:    byCategory.filter(d => d.is_negoshi_pick),
+    value:    [...byCategory].sort((a, b) => (a.price / (a.retail_price || 1)) - (b.price / (b.retail_price || 1))),
+    cheapest: [...byCategory].sort((a, b) => a.price - b.price),
   }
 
-  const filtered = sorted[activeTab].slice(0, 6)
+  const filtered = sorted[sub].slice(0, 6)
   const saving = (d: Deal) => Math.round(d.retail_price - d.price)
-
-  const tabs = [
-    { key: 'picks' as const,    label: 'Negoshi best picks' },
-    { key: 'cheapest' as const, label: 'Lowest price' },
-    { key: 'value' as const,    label: 'Most data per $' },
-  ]
 
   return (
     <section className="n-deals-bg">
@@ -44,21 +41,41 @@ export default function DealsSection({ deals }: Props) {
             <div className="n-sect-eyebrow">Hot deals</div>
             <h2 className="n-sect-title" style={{ marginBottom: 0 }}>What is live right now</h2>
           </div>
-          <div className="n-tab-bar">
-            {tabs.map(t => (
-              <button
-                key={t.key}
-                className={'n-tab' + (activeTab === t.key ? ' active' : '')}
-                onClick={() => setActiveTab(t.key)}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
         </div>
+
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+          {(['mobile', 'internet'] as const).map(cat => (
+            <button
+              key={cat}
+              className={'n-tab' + (category === cat ? ' active' : '')}
+              onClick={() => { setCategory(cat); setSub('picks') }}
+              style={{ fontSize: '0.95rem', padding: '0.55rem 1.4rem' }}
+            >
+              {cat === 'mobile' ? 'Mobile' : 'Internet'}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '2rem' }}>
+          {([
+            { key: 'picks', label: 'Top Picks' },
+            { key: 'value', label: 'Best Value' },
+            { key: 'cheapest', label: 'Lowest Price' },
+          ] as const).map(t => (
+            <button
+              key={t.key}
+              className={'n-tab' + (sub === t.key ? ' active' : '')}
+              onClick={() => setSub(t.key)}
+              style={{ background: sub === t.key ? 'var(--n-sage)' : 'rgba(26,23,20,0.06)', fontSize: '0.82rem' }}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
         {filtered.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '3rem', color: '#7A736C' }}>
-            No deals in this category yet.
+          <div style={{ textAlign: 'center', padding: '3rem', color: '#7A736C', fontSize: '0.95rem' }}>
+            No deals in this category yet — check back soon.
           </div>
         ) : (
           <div className="n-deals-grid">
@@ -69,7 +86,7 @@ export default function DealsSection({ deals }: Props) {
                 style={{ position: 'relative' }}
               >
                 {deal.is_negoshi_pick && (
-                  <div className="n-featured-label">Negoshi pick</div>
+                  <div className="n-featured-label">Top Pick</div>
                 )}
                 <div className="n-card-top">
                   <div className="n-card-prov">
@@ -106,6 +123,7 @@ export default function DealsSection({ deals }: Props) {
             ))}
           </div>
         )}
+
         <div className="n-see-all">
           <a href="/deals">See all deals</a>
         </div>
