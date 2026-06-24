@@ -13,7 +13,7 @@ async function getAllDeals() {
   )
   const { data, error } = await supabase
     .from('deals')
-    .select(`id, plan_name, description, price, retail_price, is_featured, is_member_exclusive, affiliate_url, providers ( name, logo_color, logo_text ), categories ( name, slug )`)
+    .select(`id, plan_name, description, price, retail_price, is_featured, is_member_exclusive, is_negoshi_pick, affiliate_url, providers ( name, logo_color, logo_text ), categories ( name, slug )`)
     .eq('is_active', true)
     .order('is_featured', { ascending: false })
     .order('price', { ascending: true })
