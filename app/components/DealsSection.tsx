@@ -56,9 +56,8 @@ export default function DealsSection({ deals }: Props) {
             ))}
           </div>
         </div>
-
         {filtered.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '3rem', color: '#7A736C', fontSize: '0.95rem' }}>
+          <div style={{ textAlign: 'center', padding: '3rem', color: '#7A736C' }}>
             No deals in this category yet.
           </div>
         ) : (
@@ -96,25 +95,17 @@ export default function DealsSection({ deals }: Props) {
                   </div>
                   <div className="n-card-retail">${deal.retail_price}/mo retail</div>
                 </div>
-                <div className="n-card-saving">
-                  Save ${saving(deal)}/month
-                </div>
+                <div className="n-card-saving">Save ${saving(deal)}/month</div>
                 {deal.is_member_exclusive && (
                   <div className="n-member-only">Negoshi member exclusive</div>
                 )}
-                
-                  href={deal.affiliate_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="n-deal-btn"
-                >
+                <a href={deal.affiliate_url} target="_blank" rel="noopener noreferrer" className="n-deal-btn">
                   Get this deal
                 </a>
               </div>
             ))}
           </div>
         )}
-
         <div className="n-see-all">
           <a href="/deals">See all deals</a>
         </div>
