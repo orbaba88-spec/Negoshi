@@ -28,7 +28,7 @@ export function HowItWorks() {
   const steps = [
     {
       icon: '🔍',
-      title: 'Browse today\'s deals',
+      title: "Browse today's deals",
       desc: 'See the best mobile and internet plans updated daily — with live pricing and real savings shown upfront.',
     },
     {
@@ -42,7 +42,6 @@ export function HowItWorks() {
       desc: 'The more Australians join, the more leverage we have to negotiate wholesale rates directly with providers.',
     },
   ]
-
   return (
     <section id="how-it-works" className="n-sect">
       <div className="n-sect-eyebrow">How it works</div>
@@ -63,14 +62,21 @@ export function HowItWorks() {
 
 // ─── Footer ────────────────────────────────────────────────────────────────
 export function Footer() {
-  const links = ['Deals', 'How it works', 'About', 'Privacy', 'Contact']
+  const links = [
+    { label: 'Deals',               href: '/deals' },
+    { label: 'About',               href: '/about' },
+    { label: 'Privacy Policy',      href: '/privacy' },
+    { label: 'Terms of Use',        href: '/terms' },
+    { label: 'Affiliate Disclaimer', href: '/disclaimer' },
+    { label: 'Contact',             href: 'mailto:hello@negoshi.com.au' },
+  ]
   return (
     <footer className="n-footer">
       <div className="n-footer-inner">
         <span className="n-footer-logo">Nego<span>shi</span></span>
         <ul className="n-footer-links">
           {links.map((l) => (
-            <li key={l}><a href="#">{l}</a></li>
+            <li key={l.label}><a href={l.href}>{l.label}</a></li>
           ))}
         </ul>
         <span className="n-footer-copy">© 2025 Negoshi Pty Ltd · Perth, WA</span>
