@@ -14,6 +14,7 @@ export type Deal = {
   affiliate_url: string
   speed_down: number | null
   has_lock_in: boolean
+  internet_tier: string | null
   providers: { name: string; logo_color: string; logo_text: string }
   categories: { name: string; slug: string }
 }
@@ -23,12 +24,8 @@ type Props = { deals: Deal[] }
 export default function DealsSection({ deals }: Props) {
   const [category, setCategory] = useState<'mobile' | 'internet'>('mobile')
   const [mobileSub, setMobileSub] = useState<'picks' | 'value' | 'cheapest'>('picks')
-  const [internetSub, setInternetSub] = useState<'picks' | 'finder'>('picks')
-  const [step, setStep] = useState(1)
-  const [q1, setQ1] = useState('')
-  const [q2, setQ2] = useState<string[]>([])
-  const [q3, setQ3] = useState<string[]>([])
-  const [recommended, setRecommended] = useState<Deal[]>([])
+  const [internetSub, setInternetSub] = useState<'cheapest' | 'fastest' | 'sweet'>('cheapest')
+  const [cheapestTier, setCheapestTier] = useState<'solo' | 'small' | 'family'>('solo')
 
   const mobile = deals.filter(d => d.categories?.slug === 'mobile')
   const internet = deals.filter(d => d.categories?.slug === 'internet')
@@ -39,36 +36,13 @@ export default function DealsSection({ deals }: Props) {
     cheapest: [...mobile].sort((a, b) => a.price - b.price),
   }
 
+  const internetSorted = {
+    cheapest: internet.filter(d => d.internet_tier === cheapestTier).sort((a, b) => a.price - b.price),
+    fastest: [...internet].sort((a, b) => (b.speed_down || 0) - (a.speed_down || 0)),
+    sweet: internet.filter(d => d.price <= 80 && (d.speed_down || 0) >= 100).sort((a, b) => (b.speed_down || 0) / b.price - (a.speed_down || 0) / a.price),
+  }
+
   const saving = (d: Deal) => Math.round(d.retail_price - d.price)
-
-  function toggleQ2(val: string) {
-    setQ2(prev => prev.includes(val) ? prev.filter(x => x !== val) : [...prev, val])
-  }
-
-  function toggleQ3(val: string) {
-    setQ3(prev => prev.includes(val) ? prev.filter(x => x !== val) : [...prev, val])
-  }
-
-  function findPlan() {
-    let minSpeed = 25
-    if (q1 === '2-3') minSpeed = 50
-    if (q1 === '4plus') minSpeed = 100
-    if (q2.includes('gaming')) minSpeed = Math.max(minSpeed, 100)
-    if (q2.includes('wfh') || q2.includes('calls')) minSpeed = Math.max(minSpeed, 50)
-    if (q2.includes('smarthome') || q2.includes('kids')) minSpeed = Math.max(minSpeed, 50)
-
-    let results = internet.filter(d => (d.speed_down || 0) >= minSpeed)
-    if (q3.includes('no-lock-in')) results = results.filter(d => !d.has_lock_in)
-    if (q3.includes('fastest')) results = [...results].sort((a, b) => (b.speed_down || 0) - (a.speed_down || 0))
-    else results = [...results].sort((a, b) => a.price - b.price)
-
-    setRecommended(results.slice(0, 3))
-    setStep(4)
-  }
-
-  function resetFinder() {
-    setStep(1); setQ1(''); setQ2([]); setQ3([]); setRecommended([])
-  }
 
   const DealCard = ({ deal, label }: { deal: Deal; label?: string }) => (
     <div className={'n-deal-card' + (deal.is_featured ? ' featured' : '')} style={{ position: 'relative' }}>
@@ -93,10 +67,15 @@ export default function DealsSection({ deals }: Props) {
         </div>
         <div className="n-card-retail">${deal.retail_price}/mo retail</div>
       </div>
-      <div className="n-card-saving">Save ${saving(deal)}/month</div>
+      {saving(deal) > 0 && <div className="n-card-saving">Save ${saving(deal)}/month</div>}
+      {deal.speed_down && <div style={{ fontSize: '0.78rem', color: '#185FA5', fontWeight: 600 }}>{deal.speed_down} Mbps</div>}
       {deal.is_member_exclusive && <div className="n-member-only">Negoshi member exclusive</div>}
       <a href={deal.affiliate_url} target="_blank" rel="noopener noreferrer" className="n-deal-btn">Get this deal</a>
     </div>
+  )
+
+  const Tab = ({ active, onClick, label, small }: { active: boolean; onClick: () => void; label: string; small?: boolean }) => (
+    <button className={'n-tab' + (active ? ' active' : '')} onClick={onClick} style={{ fontSize: small ? '0.82rem' : '0.95rem', padding: small ? '0.45rem 1rem' : '0.55rem 1.4rem' }}>{label}</button>
   )
 
   return (
@@ -110,19 +89,19 @@ export default function DealsSection({ deals }: Props) {
         </div>
 
         <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
-          <button className={'n-tab' + (category === 'mobile' ? ' active' : '')} onClick={() => setCategory('mobile')} style={{ fontSize: '0.95rem', padding: '0.55rem 1.4rem' }}>Mobile</button>
-          <button className={'n-tab' + (category === 'internet' ? ' active' : '')} onClick={() => setCategory('internet')} style={{ fontSize: '0.95rem', padding: '0.55rem 1.4rem' }}>Internet</button>
+          <Tab active={category === 'mobile'} onClick={() => setCategory('mobile')} label="Mobile" />
+          <Tab active={category === 'internet'} onClick={() => setCategory('internet')} label="Internet" />
         </div>
 
         {category === 'mobile' && (
           <>
             <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '2rem' }}>
-              <button className={'n-tab' + (mobileSub === 'picks' ? ' active' : '')} onClick={() => setMobileSub('picks')} style={{ fontSize: '0.82rem' }}>Top Picks</button>
-              <button className={'n-tab' + (mobileSub === 'value' ? ' active' : '')} onClick={() => setMobileSub('value')} style={{ fontSize: '0.82rem' }}>Best Value</button>
-              <button className={'n-tab' + (mobileSub === 'cheapest' ? ' active' : '')} onClick={() => setMobileSub('cheapest')} style={{ fontSize: '0.82rem' }}>Lowest Price</button>
+              <Tab active={mobileSub === 'picks'} onClick={() => setMobileSub('picks')} label="Top Picks" small />
+              <Tab active={mobileSub === 'value'} onClick={() => setMobileSub('value')} label="Best Value" small />
+              <Tab active={mobileSub === 'cheapest'} onClick={() => setMobileSub('cheapest')} label="Lowest Price" small />
             </div>
             {mobileSorted[mobileSub].length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '3rem', color: '#7A736C' }}>No deals yet.</div>
+              <div style={{ textAlign: 'center', padding: '3rem', color: '#7A736C' }}>No deals in this category yet.</div>
             ) : (
               <div className="n-deals-grid">
                 {mobileSorted[mobileSub].slice(0, 6).map(deal => <DealCard key={deal.id} deal={deal} />)}
@@ -133,110 +112,46 @@ export default function DealsSection({ deals }: Props) {
 
         {category === 'internet' && (
           <>
-            <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '2rem' }}>
-              <button className={'n-tab' + (internetSub === 'picks' ? ' active' : '')} onClick={() => { setInternetSub('picks'); resetFinder() }} style={{ fontSize: '0.82rem' }}>Top Picks</button>
-              <button className={'n-tab' + (internetSub === 'finder' ? ' active' : '')} onClick={() => setInternetSub('finder')} style={{ fontSize: '0.82rem' }}>Find My Plan</button>
+            <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '1.5rem' }}>
+              <Tab active={internetSub === 'cheapest'} onClick={() => setInternetSub('cheapest')} label="Cheapest Price" small />
+              <Tab active={internetSub === 'fastest'} onClick={() => setInternetSub('fastest')} label="Fastest Speed" small />
+              <Tab active={internetSub === 'sweet'} onClick={() => setInternetSub('sweet')} label="Sweet Spot" small />
             </div>
 
-            {internetSub === 'picks' && (
+            {internetSub === 'cheapest' && (
+              <>
+                <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '2rem' }}>
+                  <Tab active={cheapestTier === 'solo'} onClick={() => setCheapestTier('solo')} label="Solo / Couple" small />
+                  <Tab active={cheapestTier === 'small'} onClick={() => setCheapestTier('small')} label="Small Family" small />
+                  <Tab active={cheapestTier === 'family'} onClick={() => setCheapestTier('family')} label="Family 4+" small />
+                </div>
+                {internetSorted.cheapest.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '3rem', color: '#7A736C', background: '#fff', borderRadius: 14 }}>
+                    <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>No plans assigned to this tier yet.</p>
+                    <p style={{ fontSize: '0.85rem' }}>Go to the admin page and set the Internet Tier for your plans.</p>
+                  </div>
+                ) : (
+                  <div className="n-deals-grid">
+                    {internetSorted.cheapest.slice(0, 6).map(deal => <DealCard key={deal.id} deal={deal} />)}
+                  </div>
+                )}
+              </>
+            )}
+
+            {internetSub === 'fastest' && (
               <div className="n-deals-grid">
-                {internet.filter(d => d.is_negoshi_pick).slice(0, 6).map(deal => <DealCard key={deal.id} deal={deal} />)}
+                {internetSorted.fastest.slice(0, 6).map((deal, i) => <DealCard key={deal.id} deal={deal} label={i === 0 ? 'Fastest' : undefined} />)}
               </div>
             )}
 
-            {internetSub === 'finder' && (
-              <div style={{ background: '#fff', borderRadius: 18, padding: '2rem', border: '1px solid rgba(26,23,20,.08)' }}>
-
-                {step === 1 && (
-                  <div>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#7A736C', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Step 1 of 3</div>
-                    <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '1.5rem' }}>How many people in your household?</h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                      {[
-                        { key: 'just-me', label: 'Just me', desc: 'Solo browsing and streaming' },
-                        { key: '2-3', label: '2 to 3 people', desc: 'Couple or small family' },
-                        { key: '4plus', label: '4 or more people', desc: 'Large household or heavy use' },
-                      ].map(opt => (
-                        <button key={opt.key} onClick={() => { setQ1(opt.key); setStep(2) }}
-                          style={{ display: 'flex', alignItems: 'center', background: q1 === opt.key ? 'rgba(29,67,50,.08)' : '#F7F4EE', border: q1 === opt.key ? '2px solid #1B4332' : '2px solid transparent', borderRadius: 12, padding: '1rem 1.25rem', cursor: 'pointer', textAlign: 'left' }}>
-                          <div>
-                            <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>{opt.label}</div>
-                            <div style={{ fontSize: '0.8rem', color: '#7A736C', marginTop: 2 }}>{opt.desc}</div>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {step === 2 && (
-                  <div>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#7A736C', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Step 2 of 3</div>
-                    <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.4rem' }}>What do you use internet for?</h3>
-                    <p style={{ fontSize: '0.85rem', color: '#7A736C', marginBottom: '1.5rem' }}>Select all that apply</p>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.65rem', marginBottom: '1.5rem' }}>
-                      {[
-                        { key: 'streaming', label: 'Browsing and streaming' },
-                        { key: 'wfh', label: 'Working from home' },
-                        { key: 'gaming', label: 'Gaming and 4K' },
-                        { key: 'calls', label: 'Video calls (Zoom, Teams)' },
-                        { key: 'smarthome', label: 'Smart home devices' },
-                        { key: 'kids', label: 'Kids and family' },
-                      ].map(opt => (
-                        <button key={opt.key} onClick={() => toggleQ2(opt.key)}
-                          style={{ background: q2.includes(opt.key) ? 'rgba(29,67,50,.08)' : '#F7F4EE', border: q2.includes(opt.key) ? '2px solid #1B4332' : '2px solid transparent', borderRadius: 10, padding: '0.75rem 1rem', cursor: 'pointer', textAlign: 'left', fontSize: '0.875rem', fontWeight: q2.includes(opt.key) ? 600 : 400 }}>
-                          {q2.includes(opt.key) ? 'Checked ' : ''}{opt.label}
-                        </button>
-                      ))}
-                    </div>
-                    <div style={{ display: 'flex', gap: '0.75rem' }}>
-                      <button onClick={() => setStep(1)} style={{ padding: '0.7rem 1.25rem', borderRadius: 8, border: '1px solid rgba(26,23,20,.15)', background: 'none', cursor: 'pointer', fontSize: '0.875rem' }}>Back</button>
-                      <button onClick={() => setStep(3)} disabled={q2.length === 0} style={{ padding: '0.7rem 1.5rem', borderRadius: 8, background: q2.length > 0 ? '#1B4332' : '#ccc', color: '#fff', border: 'none', cursor: q2.length > 0 ? 'pointer' : 'not-allowed', fontSize: '0.875rem', fontWeight: 600 }}>Next</button>
-                    </div>
-                  </div>
-                )}
-
-                {step === 3 && (
-                  <div>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#7A736C', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Step 3 of 3</div>
-                    <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.4rem' }}>What matters most to you?</h3>
-                    <p style={{ fontSize: '0.85rem', color: '#7A736C', marginBottom: '1.5rem' }}>Select all that apply</p>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', marginBottom: '1.5rem' }}>
-                      {[
-                        { key: 'cheapest', label: 'Lowest price' },
-                        { key: 'fastest', label: 'Fastest speed' },
-                        { key: 'no-lock-in', label: 'No lock-in contract' },
-                      ].map(opt => (
-                        <button key={opt.key} onClick={() => toggleQ3(opt.key)}
-                          style={{ background: q3.includes(opt.key) ? 'rgba(29,67,50,.08)' : '#F7F4EE', border: q3.includes(opt.key) ? '2px solid #1B4332' : '2px solid transparent', borderRadius: 10, padding: '0.85rem 1.25rem', cursor: 'pointer', textAlign: 'left', fontSize: '0.875rem', fontWeight: q3.includes(opt.key) ? 600 : 400 }}>
-                          {q3.includes(opt.key) ? 'Checked ' : ''}{opt.label}
-                        </button>
-                      ))}
-                    </div>
-                    <div style={{ display: 'flex', gap: '0.75rem' }}>
-                      <button onClick={() => setStep(2)} style={{ padding: '0.7rem 1.25rem', borderRadius: 8, border: '1px solid rgba(26,23,20,.15)', background: 'none', cursor: 'pointer', fontSize: '0.875rem' }}>Back</button>
-                      <button onClick={findPlan} disabled={q3.length === 0} style={{ padding: '0.7rem 1.5rem', borderRadius: 8, background: q3.length > 0 ? '#1B4332' : '#ccc', color: '#fff', border: 'none', cursor: q3.length > 0 ? 'pointer' : 'not-allowed', fontSize: '0.875rem', fontWeight: 600 }}>Show my plans</button>
-                    </div>
-                  </div>
-                )}
-
-                {step === 4 && (
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                      <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>{recommended.length > 0 ? 'Your best matches' : 'No exact matches found'}</h3>
-                      <button onClick={resetFinder} style={{ fontSize: '0.82rem', color: '#1B4332', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>Start over</button>
-                    </div>
-                    {recommended.length === 0 ? (
-                      <p style={{ color: '#7A736C', fontSize: '0.9rem' }}>No plans match your criteria yet. Check Top Picks instead.</p>
-                    ) : (
-                      <div className="n-deals-grid">
-                        {recommended.map((deal, i) => <DealCard key={deal.id} deal={deal} label={i === 0 ? 'Best match' : undefined} />)}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-              </div>
+            {internetSub === 'sweet' && (
+              internetSorted.sweet.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '3rem', color: '#7A736C' }}>No sweet spot deals found yet.</div>
+              ) : (
+                <div className="n-deals-grid">
+                  {internetSorted.sweet.slice(0, 6).map((deal, i) => <DealCard key={deal.id} deal={deal} label={i === 0 ? 'Best balance' : undefined} />)}
+                </div>
+              )
             )}
           </>
         )}
