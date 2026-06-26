@@ -10,13 +10,13 @@ export function StatsBar() {
     <div className="n-stats">
       <div className="n-stats-inner">
         {stats.map((s, i) => (
-          <>
-            <div key={s.lbl}>
+          <div key={i} style={{ display: 'contents' }}>
+            <div>
               <div className="n-stat-num">{s.num}</div>
               <div className="n-stat-lbl">{s.lbl}</div>
             </div>
-            {i < stats.length - 1 && <div key={`d${i}`} className="n-stat-div" />}
-          </>
+            {i < stats.length - 1 && <div className="n-stat-div" />}
+          </div>
         ))}
       </div>
     </div>
@@ -63,12 +63,12 @@ export function HowItWorks() {
 // ─── Footer ────────────────────────────────────────────────────────────────
 export function Footer() {
   const links = [
-    { label: 'Deals',               href: '/deals' },
-    { label: 'About',               href: '/about' },
-    { label: 'Privacy Policy',      href: '/privacy' },
-    { label: 'Terms of Use',        href: '/terms' },
+    { label: 'Deals',                href: '/deals' },
+    { label: 'About',                href: '/about' },
+    { label: 'Privacy Policy',       href: '/privacy' },
+    { label: 'Terms of Use',         href: '/terms' },
     { label: 'Affiliate Disclaimer', href: '/disclaimer' },
-    { label: 'Contact',             href: 'mailto:hello@negoshi.com.au' },
+    { label: 'Contact',              href: 'mailto:hello@negoshi.com.au' },
   ]
   return (
     <footer className="n-footer">
