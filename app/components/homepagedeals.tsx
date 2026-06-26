@@ -14,9 +14,8 @@ type Deal = {
   categories: { name: string; slug: string }
 }
 
-export default function HomepageDeals({ deals }: { deals: Deal[] }) {
+export default function HomepageDeals({ deals = [] }: { deals: Deal[] }) {
   const saving = (d: Deal) => Math.round(d.retail_price - d.price)
-  const safeDeals = deals ?? []
 
   return (
     <section style={{ background: '#EDE8DF', padding: '5rem 5%' }}>
@@ -31,14 +30,14 @@ export default function HomepageDeals({ deals }: { deals: Deal[] }) {
           </Link>
         </div>
 
-        {safeDeals.length === 0 ? (
+        {!deals || deals.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '3rem', color: '#7A736C', background: '#fff', borderRadius: 14 }}>
             <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>Deals loading soon</p>
             <p style={{ fontSize: '0.85rem' }}>Mark deals as Top Pick in the admin to feature them here.</p>
           </div>
         ) : (
           <div className="n-deals-grid">
-            {safeDeals.map((deal, i) => (
+            {deals.map((deal, i) => (
               <div key={deal.id} className="n-deal-card" style={{ position: 'relative' }}>
                 {i === 0 && <div className="n-featured-label">Best pick</div>}
                 {deal.is_negoshi_pick && i > 0 && <div className="n-featured-label">Top pick</div>}
