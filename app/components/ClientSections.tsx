@@ -1,44 +1,13 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-
-const MEMBER_COUNT = 2413
-const NEXT_MILESTONE = 5000
-
-function useCountUp(target: number, duration = 1500) {
-  const [count, setCount] = useState(0)
-  const started = useRef(false)
-  useEffect(() => {
-    if (started.current) return
-    started.current = true
-    const start = performance.now()
-    const step = (now: number) => {
-      const p = Math.min((now - start) / duration, 1)
-      const e = 1 - Math.pow(1 - p, 3)
-      setCount(Math.floor(e * target))
-      if (p < 1) requestAnimationFrame(step)
-    }
-    requestAnimationFrame(step)
-  }, [target, duration])
-  return count
-}
+import { useState } from 'react'
 
 // ─── Collective Power ─────────────────────────────────────────────────────
 export function CollectivePower() {
-  const count = useCountUp(MEMBER_COUNT, 1600)
-  const [barWidth, setBarWidth] = useState('0%')
-
-  useEffect(() => {
-    const t = setTimeout(() => {
-      setBarWidth(`${(MEMBER_COUNT / NEXT_MILESTONE * 100).toFixed(2)}%`)
-    }, 500)
-    return () => clearTimeout(t)
-  }, [])
-
   const bullets = [
     { icon: '✅', label: 'Zero cost to join.', sub: 'Negoshi is free. Always.' },
-    { icon: '🔓', label: 'No lock-in.',       sub: 'Switch plans or leave anytime — no strings.' },
-    { icon: '🏷️', label: 'Exclusive rates.',  sub: "Member deals can't be found anywhere else." },
+    { icon: '🔓', label: 'No lock-in.',        sub: 'Switch plans or leave anytime — no strings.' },
+    { icon: '🔍', label: 'We do the research.', sub: 'Every deal checked and updated daily so you don\'t have to.' },
   ]
 
   const providers = ['Telstra', 'Optus', 'Vodafone', 'Aussie BB', 'Superloop']
@@ -53,8 +22,8 @@ export function CollectivePower() {
         </h2>
         <p className="n-sect-sub">
           Negoshi isn't just a deals site. We use our growing member base as leverage
-          to negotiate exclusive wholesale rates directly with providers — rates you
-          can't find anywhere else.
+          to negotiate better rates directly with providers — and we list every good
+          deal we find, regardless of whether we earn a commission on it.
         </p>
         <div className="n-coll-bullets">
           {bullets.map((b) => (
@@ -69,24 +38,16 @@ export function CollectivePower() {
       </div>
 
       <div className="n-coll-visual">
-        <div className="n-coll-vis-title">Members and counting</div>
-        <div className="n-coll-counter">{count.toLocaleString()}</div>
-        <div className="n-coll-sublabel">Australians in the collective</div>
-
-        <div className="n-milestone-bar">
-          <div className="n-milestone-fill" style={{ width: barWidth }} />
-        </div>
-        <div className="n-milestone-labels">
-          <span>Now: <strong>{MEMBER_COUNT.toLocaleString()}</strong></span>
-          <span>Next deal: <strong>{NEXT_MILESTONE.toLocaleString()}</strong></span>
-        </div>
-        <p className="n-milestone-hint">
-          At {NEXT_MILESTONE.toLocaleString()} members, we negotiate our next exclusive wholesale rate.
-        </p>
-
-        <div className="n-coll-chips">
+        <div className="n-coll-vis-title">Providers we track</div>
+        <div className="n-coll-chips" style={{ marginTop: '1rem' }}>
           {providers.map((p) => <div key={p} className="n-chip">{p}</div>)}
         </div>
+        <p style={{ marginTop: '1.5rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.6 }}>
+          Some links earn Negoshi a small commission — at no extra cost to you.{' '}
+          <a href="/disclaimer" style={{ textDecoration: 'underline', color: 'rgba(255,255,255,0.7)' }}>
+            How we make money
+          </a>
+        </p>
       </div>
     </section>
   )
