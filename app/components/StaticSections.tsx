@@ -1,10 +1,10 @@
 // ─── StatsBar ──────────────────────────────────────────────────────────────
 export function StatsBar() {
   const stats = [
-    { num: '2,413+', lbl: 'Members saving today' },
-    { num: '$34',    lbl: 'Avg monthly saving'   },
-    { num: '47',     lbl: 'Live deals right now'  },
-    { num: '$0',     lbl: 'Cost to join'          },
+    { num: '47',   lbl: 'Live deals today'    },
+    { num: '20+',  lbl: 'Providers compared'  },
+    { num: '$34',  lbl: 'Avg monthly saving'  },
+    { num: '$0',   lbl: 'Cost to join'        },
   ]
   return (
     <div className="n-stats">
@@ -34,12 +34,12 @@ export function HowItWorks() {
     {
       icon: '✉️',
       title: 'Join free in 30 seconds',
-      desc: 'Drop your email to become a Negoshi member. No credit card, no commitment — just access to exclusive rates.',
+      desc: 'Drop your email to become a Negoshi member. No credit card, no commitment — just access to the best rates we find.',
     },
     {
       icon: '💸',
       title: 'Pay less, every month',
-      desc: 'The more Australians join, the more leverage we have to negotiate wholesale rates directly with providers.',
+      desc: 'The more Australians join, the more leverage we have to negotiate better rates directly with providers.',
     },
   ]
   return (
@@ -56,6 +56,10 @@ export function HowItWorks() {
           </div>
         ))}
       </div>
+      <p style={{ textAlign: 'center', marginTop: '2rem', fontSize: '0.8rem', color: '#9A9389' }}>
+        Some links earn Negoshi a small commission — at no extra cost to you.{' '}
+        <a href="/disclaimer" style={{ textDecoration: 'underline' }}>How we make money</a>
+      </p>
     </section>
   )
 }

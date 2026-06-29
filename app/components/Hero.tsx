@@ -1,30 +1,4 @@
-'use client'
-
-import { useEffect, useState, useRef } from 'react'
-
-const MEMBER_COUNT = 2413
-
-function useCountUp(target: number, duration = 1400) {
-  const [count, setCount] = useState(0)
-  const started = useRef(false)
-  useEffect(() => {
-    if (started.current) return
-    started.current = true
-    const start = performance.now()
-    const step = (now: number) => {
-      const progress = Math.min((now - start) / duration, 1)
-      const eased = 1 - Math.pow(1 - progress, 3)
-      setCount(Math.floor(eased * target))
-      if (progress < 1) requestAnimationFrame(step)
-    }
-    requestAnimationFrame(step)
-  }, [target, duration])
-  return count
-}
-
 export default function Hero() {
-  const count = useCountUp(MEMBER_COUNT)
-
   return (
     <div className="n-hero-wrap">
       <div className="n-hero">
@@ -38,8 +12,8 @@ export default function Hero() {
             we <em>pay less.</em>
           </h1>
           <p className="n-hero-sub">
-            Negoshi pools Australians together to unlock mobile and internet rates
-            you simply can't get on your own. The more members, the stronger our deal.
+            Negoshi finds the best mobile and internet rates in Australia —
+            updated daily, free to use, no catch.
           </p>
           <a href="#join" className="n-btn-primary">
             Join free — 30 seconds →
@@ -53,7 +27,7 @@ export default function Hero() {
               ))}
             </div>
             <span className="n-trust-text">
-              <strong>{count.toLocaleString()}</strong> Australians already saving
+              Free to join · No credit card · Cancel anytime
             </span>
           </div>
         </div>
