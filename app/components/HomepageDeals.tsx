@@ -24,7 +24,6 @@ export default function HomepageDeals({ deals = [] }: { deals: Deal[] }) {
   return (
     <section style={{ background: '#EDE8DF', padding: '5rem 5%' }}>
       <div style={{ maxWidth: 1160, margin: '0 auto' }}>
-
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <div className="n-sect-eyebrow">Top picks</div>
@@ -34,7 +33,6 @@ export default function HomepageDeals({ deals = [] }: { deals: Deal[] }) {
             Browse all deals
           </Link>
         </div>
-
         {!deals || deals.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '3rem', color: '#7A736C', background: '#fff', borderRadius: 14 }}>
             <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>Deals loading soon</p>
@@ -81,12 +79,7 @@ export default function HomepageDeals({ deals = [] }: { deals: Deal[] }) {
                 {deal.is_member_exclusive && (
                   <div className="n-member-only">Negoshi member exclusive</div>
                 )}
-                
-                  href={deal.affiliate_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="n-deal-btn"
-                >
+                <a href={deal.affiliate_url} target="_blank" rel="noopener noreferrer" className="n-deal-btn">
                   Get this deal
                 </a>
                 <button
@@ -99,7 +92,6 @@ export default function HomepageDeals({ deals = [] }: { deals: Deal[] }) {
             ))}
           </div>
         )}
-
         <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
           <Link href="/deals" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: '#1B4332', color: '#fff', padding: '0.875rem 2rem', borderRadius: 100, fontWeight: 600, fontSize: '0.975rem', textDecoration: 'none' }}>
             Browse all deals
@@ -109,7 +101,6 @@ export default function HomepageDeals({ deals = [] }: { deals: Deal[] }) {
           </p>
         </div>
       </div>
-
       {reminderDeal && (
         <div
           onClick={() => setReminderDeal(null)}
