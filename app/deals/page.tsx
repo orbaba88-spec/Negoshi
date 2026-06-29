@@ -4,7 +4,7 @@ import { Footer } from '../components/StaticSections'
 import DealsSection from '../components/DealsSection'
 import '../negoshi.css'
 
-export const revalidate = 0
+export const dynamic = 'force-dynamic'
 
 async function getAllDeals() {
   const supabase = createClient(
