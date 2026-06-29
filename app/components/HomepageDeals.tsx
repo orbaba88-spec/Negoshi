@@ -1,4 +1,7 @@
+'use client'
 import Link from 'next/link'
+import { useState } from 'react'
+import PromoReminderForm from './PromoReminderForm'
 
 type Deal = {
   id: string
@@ -16,6 +19,7 @@ type Deal = {
 
 export default function HomepageDeals({ deals = [] }: { deals: Deal[] }) {
   const saving = (d: Deal) => Math.round(d.retail_price - d.price)
+  const [reminderDeal, setReminderDeal] = useState<Deal | null>(null)
 
   return (
     <section style={{ background: '#EDE8DF', padding: '5rem 5%' }}>
@@ -68,9 +72,21 @@ export default function HomepageDeals({ deals = [] }: { deals: Deal[] }) {
                 {saving(deal) > 0 && <div className="n-card-saving">Save ${saving(deal)}/month</div>}
                 {deal.speed_down && <div style={{ fontSize: '0.78rem', color: '#185FA5', fontWeight: 600 }}>{deal.speed_down} Mbps</div>}
                 {deal.is_member_exclusive && <div className="n-member-only">Negoshi member exclusive</div>}
-                <a href={deal.affiliate_url} target="_blank" rel="noopener noreferrer" className="n-deal-btn">
+
+                
+                  href={deal.affiliate_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="n-deal-btn"
+                >
                   Get this deal
                 </a>
+                <button
+                  onClick={() => setReminderDeal(deal)}
+                  style={{ width: '100%', marginTop: '0.5rem', background: 'transparent', border: '1px solid rgba(26,23,20,0.15)', borderRadius: 100, padding: '0.6rem', fontSize: '0.82rem', color: '#7A736C', cursor: 'pointer', fontWeight: 500 }}
+                >
+                  ⏰ Remind me when promo ends
+                </button>
               </div>
             ))}
           </div>
@@ -85,6 +101,34 @@ export default function HomepageDeals({ deals = [] }: { deals: Deal[] }) {
           </p>
         </div>
       </div>
+
+      {/* Reminder modal */}
+      {reminderDeal && (
+        <div
+          onClick={() => setReminderDeal(null)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(26,23,20,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{ background: '#FDFAF5', borderRadius: 16, padding: '2rem', width: '100%', maxWidth: 460, position: 'relative' }}
+          >
+            <button
+              onClick={() => setReminderDeal(null)}
+              style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: '#7A736C' }}
+            >
+              ✕
+            </button>
+            <div style={{ marginBottom: '1.5rem' }}>
+              <div className="n-sect-eyebrow">Promo reminder</div>
+              <h3 style={{ margin: '0.25rem 0 0.5rem', fontSize: '1.2rem' }}>{reminderDeal.plan_name}</h3>
+              <p style={{ color: '#7A736C', fontSize: '0.88rem', margin: 0 }}>
+                We'll email you a week before your promo ends so you can switch before the price goes up.
+              </p>
+            </div>
+            <PromoReminderForm dealName={reminderDeal.plan_name} />
+          </div>
+        </div>
+      )}
     </section>
   )
 }
