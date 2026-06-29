@@ -15,9 +15,9 @@ export async function GET(req: NextRequest) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
 
-  // Find everyone whose promo ends in exactly 7 days
+  // Remind people whose promo ends in 35 days (5 weeks)
   const target = new Date()
-  target.setDate(target.getDate() + 7)
+  target.setDate(target.getDate() + 35)
   const dateStr = target.toISOString().split('T')[0]
 
   const { data: reminders, error } = await supabase
@@ -35,18 +35,18 @@ export async function GET(req: NextRequest) {
       await resend.emails.send({
         from: 'Negoshi <hello@negoshi.com.au>',
         to: r.email,
-        subject: `Your ${r.plan_name} promo ends in 7 days`,
+        subject: `Your ${r.plan_name} promo ends in 5 weeks`,
         html: `
           <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:2rem;">
             <h2 style="color:#1A1714;">⏰ Your promo is ending soon</h2>
-            <p>Just a heads up — your <strong>${r.plan_name}</strong> promotional rate ends in 7 days.</p>
-            <p>Before it reverts to full price, check what's live on Negoshi right now.</p>
+            <p>Just a heads up — your <strong>${r.plan_name}</strong> promotional rate ends in about 5 weeks on ${new Date(r.promo_end_date).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })}.</p>
+            <p>After that, your price goes up automatically. Check what's live on Negoshi right now before that happens.</p>
             <a href="https://www.negoshi.com.au/deals"
                style="display:inline-block;background:#4A7EC9;color:#fff;padding:0.75rem 1.5rem;border-radius:8px;text-decoration:none;margin:1rem 0;">
               See today's best deals →
             </a>
             <p style="color:#9A9389;font-size:0.85rem;margin-top:2rem;">
-              You set this reminder on Negoshi. 
+              You set this reminder on Negoshi —
               <a href="https://www.negoshi.com.au">negoshi.com.au</a>
             </p>
           </div>
