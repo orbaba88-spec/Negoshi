@@ -24,6 +24,7 @@ export default function HomepageDeals({ deals = [] }: { deals: Deal[] }) {
   return (
     <section style={{ background: '#EDE8DF', padding: '5rem 5%' }}>
       <div style={{ maxWidth: 1160, margin: '0 auto' }}>
+
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <div className="n-sect-eyebrow">Top picks</div>
@@ -69,10 +70,17 @@ export default function HomepageDeals({ deals = [] }: { deals: Deal[] }) {
                   </div>
                   <div className="n-card-retail">${deal.retail_price}/mo retail</div>
                 </div>
-                {saving(deal) > 0 && <div className="n-card-saving">Save ${saving(deal)}/month</div>}
-                {deal.speed_down && <div style={{ fontSize: '0.78rem', color: '#185FA5', fontWeight: 600 }}>{deal.speed_down} Mbps</div>}
-                {deal.is_member_exclusive && <div className="n-member-only">Negoshi member exclusive</div>}
-
+                {saving(deal) > 0 && (
+                  <div className="n-card-saving">Save ${saving(deal)}/month</div>
+                )}
+                {deal.speed_down && (
+                  <div style={{ fontSize: '0.78rem', color: '#185FA5', fontWeight: 600 }}>
+                    {deal.speed_down} Mbps
+                  </div>
+                )}
+                {deal.is_member_exclusive && (
+                  <div className="n-member-only">Negoshi member exclusive</div>
+                )}
                 
                   href={deal.affiliate_url}
                   target="_blank"
@@ -102,7 +110,6 @@ export default function HomepageDeals({ deals = [] }: { deals: Deal[] }) {
         </div>
       </div>
 
-      {/* Reminder modal */}
       {reminderDeal && (
         <div
           onClick={() => setReminderDeal(null)}
